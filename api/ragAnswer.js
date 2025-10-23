@@ -1,3 +1,27 @@
+
+export default async function handler(req, res) {
+  // --- CORS ---
+  const origin = req.headers.origin;
+  const allowed = (process.env.ALLOWED_ORIGIN || '')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const allowOrigin = allowed.includes(origin) ? origin : '';
+  res.setHeader('Access-Control-Allow-Origin', allowOrigin);
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Vary', 'Origin');
+
+  if (req.method === 'OPTIONS') return res.status(204).end();
+  if (req.method !== 'POST')  return res.status(405).json({ error: 'Use POST' });
+
+  // …your existing POST logic stays below…
+}
+
+
+
+
 import 'dotenv/config';
 import fetch from "node-fetch";
 import { Pool } from "pg";
